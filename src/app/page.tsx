@@ -183,8 +183,8 @@ export default function Home() {
       <section className="section" id="contact">
         <h2 className="section-title">Enquire Now</h2>
         <div className="enquiry-grid mt-8">
-          <div className="bg-[#f5f0e8]/5 rounded-lg h-64 md:h-auto flex items-center justify-center text-[#f5f0e8]/30">
-            Image placeholder
+          <div className="relative h-64 md:h-auto rounded-lg overflow-hidden">
+            <img src="/media/project-skyline.jpg" alt="Aurelia Homes" className="w-full h-full object-cover" />
           </div>
           <form className="enquiry-form" onSubmit={handleEnquiry}>
             <input type="text" placeholder="Your Name" required />
