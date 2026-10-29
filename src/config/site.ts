@@ -1,0 +1,82 @@
+// src/config/site.ts — change brand, city, projects here
+export const siteConfig = {
+  brand: "Aurelia Homes",
+  tagline: "Spaces That Rise Above",
+  city: "Mumbai",
+  phone: "+91 98765 43210",
+  email: "hello@aureliahomes.in",
+  address: "Tower A, Aurelia Business Park, Bandra Kurla Complex, Mumbai 400051",
+  rera: "P51900012345",
+  social: {
+    instagram: "https://instagram.com/aureliahomes",
+    linkedin: "https://linkedin.com/company/aureliahomes",
+    youtube: "https://youtube.com/@aureliahomes",
+  },
+  stats: [
+    { value: 15, suffix: "+", label: "Years of Excellence" },
+    { value: 40, suffix: "+", label: "Projects Delivered" },
+    { value: 8000, suffix: "+", label: "Families Housed" },
+    { value: 12, suffix: "M+", label: "Sq Ft Delivered" },
+  ],
+  projects: [
+    {
+      name: "Aurelia Skyline",
+      location: "Worli, Mumbai",
+      config: "2 & 3 BHK",
+      price: "Starting ₹2.5 Cr",
+      image: "/media/project-skyline.jpg",
+    },
+    {
+      name: "Aurelia Greens",
+      location: "Thane West",
+      config: "2, 3 & 4 BHK",
+      price: "Starting ₹1.8 Cr",
+      image: "/media/project-greens.jpg",
+    },
+    {
+      name: "Aurelia Crest",
+      location: "Powai, Mumbai",
+      config: "3 & 4 BHK",
+      price: "Starting ₹3.2 Cr",
+      image: "/media/project-crest.jpg",
+    },
+  ],
+  amenities: [
+    { name: "Infinity Pool", icon: "pool" },
+    { name: "Clubhouse", icon: "clubhouse" },
+    { name: "Gym & Spa", icon: "gym" },
+    { name: "Landscaped Gardens", icon: "garden" },
+    { name: "Rooftop Terrace", icon: "terrace" },
+    { name: "Kids Play Area", icon: "play" },
+    { name: "24/7 Security", icon: "security" },
+    { name: "EV Charging", icon: "ev" },
+  ],
+  highlights: [
+    { title: "Infinity Pool", image: "/media/highlight-pool.jpg", desc: "Olympic-length pool with skyline views" },
+    { title: "Clubhouse", image: "/media/highlight-clubhouse.jpg", desc: "25,000 sq ft of curated lifestyle spaces" },
+    { title: "Gardens", image: "/media/highlight-gardens.jpg", desc: "3 acres of landscaped greenery" },
+    { title: "Skyline Views", image: "/media/highlight-skyline.jpg", desc: "Panoramic views of the Mumbai skyline" },
+  ],
+  floorPlans: {
+    "1 BHK": "/media/floorplan-1bhk.jpg",
+    "2 BHK": "/media/floorplan-2bhk.jpg",
+    "3 BHK": "/media/floorplan-3bhk.jpg",
+  },
+  locations: [
+    { name: "Airport", distance: "12 km", icon: "✈️" },
+    { name: "Metro Station", distance: "2 km", icon: "🚇" },
+    { name: "International School", distance: "3 km", icon: "🎓" },
+    { name: "Hospital", distance: "5 km", icon: "🏥" },
+  ],
+  timeline: [
+    { year: "2024", event: "Project Launch & Groundbreaking" },
+    { year: "2025", event: "Foundation & Structure Complete" },
+    { year: "2026", event: "Interior Work & Amenities" },
+    { year: "2027", event: "Handover to Families" },
+  ],
+  testimonials: [
+    { name: "Priya Sharma", text: "Aurelia Homes delivered exactly what they promised. The quality of construction and attention to detail exceeded our expectations.", role: "Homeowner, Aurelia Skyline" },
+    { name: "Rajesh Mehta", text: "From booking to handover, the entire experience was seamless. The team is professional and transparent.", role: "Homeowner, Aurelia Greens" },
+    { name: "Anita Desai", text: "The amenities are world-class. My family loves the pool and clubhouse. Best investment we've made.", role: "Homeowner, Aurelia Crest" },
+  ],
+};
