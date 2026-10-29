@@ -58,9 +58,9 @@ export const siteConfig = {
     { title: "Skyline Views", image: "/media/highlight-skyline.jpg", desc: "Panoramic views of the Mumbai skyline" },
   ],
   floorPlans: {
-    "1 BHK": "/media/floorplan-1bhk.jpg",
-    "2 BHK": "/media/floorplan-2bhk.jpg",
-    "3 BHK": "/media/floorplan-3bhk.jpg",
+    "1 BHK": "/media/floorplan-1bhk.svg",
+    "2 BHK": "/media/floorplan-2bhk.svg",
+    "3 BHK": "/media/floorplan-3bhk.svg",
   },
   locations: [
     { name: "Airport", distance: "12 km", icon: "✈️" },

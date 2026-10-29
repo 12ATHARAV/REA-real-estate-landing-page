@@ -1,224 +1,33 @@
 "use client";
-
+import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
 import { siteConfig } from "@/config/site";
 import Lenis from "@studio-freight/lenis";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
-
+import { AnimatePresence, motion } from "framer-motion";
 gsap.registerPlugin(ScrollTrigger);
-
-export default function Home() {
-  const heroRef = useRef<HTMLDivElement>(null);
-  const [activeTab, setActiveTab] = useState("2 BHK");
-  const [enquiryStatus, setEnquiryStatus] = useState<"idle" | "success">("idle");
-
-  useEffect(() => {
-    const lenis = new Lenis({ duration: 1.2, easing: (t: number) => Math.min(1, 1.001 - Math.pow(2, -10 * t)) });
-    lenis.on("scroll", ScrollTrigger.update);
-    gsap.ticker.add((time) => lenis.raf(time * 1000));
-    gsap.ticker.lagSmoothing(0);
-
-    const words = document.querySelectorAll(".hero-word span");
-    words.forEach((w, i) => {
-      gsap.to(w, { y: 0, opacity: 1, duration: 0.8, delay: i * 0.15, ease: "power3.out" });
-    });
-
-    gsap.to(".hero-video", { scale: 1, duration: 2, ease: "power2.out" });
-
-    const stats = document.querySelectorAll(".stat-value");
-    stats.forEach((el) => {
-      const target = parseInt(el.getAttribute("data-target") || "0");
-      ScrollTrigger.create({
-        trigger: el,
-        start: "top 80%",
-        once: true,
-        onEnter: () => {
-          gsap.to(el, { innerText: target, duration: 2, snap: { innerText: 1 }, ease: "power2.out" });
-        },
-      });
-    });
-
-    ScrollTrigger.create({
-      trigger: ".timeline",
-      start: "top 70%",
-      end: "bottom 30%",
-      scrub: true,
-      onUpdate: (self) => {
-        const line = document.querySelector(".timeline-line") as HTMLElement;
-        if (line) line.style.height = `${self.progress * 100}%`;
-      },
-    });
-
-    return () => { lenis.destroy(); ScrollTrigger.getAll().forEach((t) => t.kill()); };
-  }, []);
-
-  const handleEnquiry = async (e: React.FormEvent) => {
-    e.preventDefault();
-    await fetch("/api/enquiry", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ name: "test" }) });
-    setEnquiryStatus("success");
-  };
-
-  return (
-    <>
-      <nav className="fixed top-0 left-0 right-0 z-50 transition-all duration-400 px-8 py-5">
-        <div className="max-w-7xl mx-auto flex justify-between items-center">
-          <span className="font-[family-name:var(--font-playfair)] text-xl">{siteConfig.brand}</span>
-          <div className="hidden md:flex gap-8">
-            {["Projects", "Amenities", "Location", "Contact"].map((l) => (
-              <a key={l} href={`#${l.toLowerCase()}`} className="text-sm text-[#f5f0e8]/70 hover:text-[#C9A24B] transition-colors">{l}</a>
-            ))}
-          </div>
-          <a href="#contact" className="px-5 py-2 bg-[#C9A24B] text-[#0a0a0a] rounded-full text-sm font-semibold">Enquire Now</a>
-        </div>
-      </nav>
-
-      <section className="hero" ref={heroRef}>
-        <video className="hero-video" autoPlay muted loop playsInline poster="/media/hero-poster.jpg" style={{ transform: "scale(1.1)" }}>
-          <source src="/media/hero-video.mp4" type="video/mp4" />
-        </video>
-        <div className="hero-overlay" />
-        <div className="hero-content">
-          <h1 className="word-reveal in">
-            {"Spaces That Rise Above".split(" ").map((w, i) => (
-              <span key={i} className="inline-block mr-3" style={{ transitionDelay: `${i * 0.15}s` }}>{w}</span>
-            ))}
-          </h1>
-          <p>Premium residences crafted for those who seek more than a home — a legacy.</p>
-          <button className="hero-cta">Book a Site Visit</button>
-        </div>
-      </section>
-
-      <section className="section">
-        <div className="stats-grid">
-          {siteConfig.stats.map((s, i) => (
-            <div key={i} className="stat">
-              <div className="stat-value" data-target={s.value}>0</div>
-              <div className="stat-label">{s.label}</div>
-            </div>
-          ))}
-        </div>
-      </section>
-
-      <section className="section-full" id="projects">
-        <div className="section">
-          <h2 className="section-title">Featured Projects</h2>
-        </div>
-        <div className="projects-scroll">
-          {siteConfig.projects.map((p, i) => (
-            <div key={i} className="project-card">
-              <img src={p.image} alt={p.name} width={420} height={300} />
-              <div className="project-info">
-                <div className="project-name">{p.name}</div>
-                <div className="project-loc">{p.location} · {p.config}</div>
-                <div className="project-price">{p.price}</div>
-              </div>
-            </div>
-          ))}
-        </div>
-      </section>
-
-      <section className="section" id="amenities">
-        <h2 className="section-title">World-Class Amenities</h2>
-        <div className="amenities-grid">
-          {siteConfig.amenities.map((a, i) => (
-            <div key={i} className="amenity">
-              <div className="amenity-icon">✦</div>
-              <div className="amenity-name">{a.name}</div>
-            </div>
-          ))}
-        </div>
-      </section>
-
-      <section className="section">
-        <h2 className="section-title">Floor Plans</h2>
-        <div className="tabs">
-          {Object.keys(siteConfig.floorPlans).map((t) => (
-            <button key={t} className={`tab ${activeTab === t ? "active" : ""}`} onClick={() => setActiveTab(t)}>{t}</button>
-          ))}
-        </div>
-        <img src={siteConfig.floorPlans[activeTab as keyof typeof siteConfig.floorPlans]} alt={activeTab} className="floorplan-img" />
-      </section>
-
-      <section className="section" id="location">
-        <h2 className="section-title">Location Advantage</h2>
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-8">
-          {siteConfig.locations.map((l, i) => (
-            <div key={i} className="text-center p-4 border border-[#f5f0e8]/10 rounded-lg">
-              <div className="text-2xl mb-2">{l.icon}</div>
-              <div className="text-sm">{l.name}</div>
-              <div className="text-[#C9A24B] text-sm mt-1">{l.distance}</div>
-            </div>
-          ))}
-        </div>
-      </section>
-
-      <section className="section">
-        <h2 className="section-title">Construction Progress</h2>
-        <div className="timeline mt-8">
-          <div className="timeline-line" />
-          {siteConfig.timeline.map((t, i) => (
-            <div key={i} className="timeline-item">
-              <div className="timeline-dot" />
-              <div className="timeline-year">{t.year}</div>
-              <div className="timeline-event">{t.event}</div>
-            </div>
-          ))}
-        </div>
-      </section>
-
-      <section className="section">
-        <h2 className="section-title">What Our Residents Say</h2>
-        <div className="grid md:grid-cols-3 gap-6 mt-8">
-          {siteConfig.testimonials.map((t, i) => (
-            <div key={i} className="testimonial-card">
-              <p className="testimonial-text">&ldquo;{t.text}&rdquo;</p>
-              <div className="testimonial-name">{t.name}</div>
-              <div className="testimonial-role">{t.role}</div>
-            </div>
-          ))}
-        </div>
-      </section>
-
-      <section className="section" id="contact">
-        <h2 className="section-title">Enquire Now</h2>
-        <div className="enquiry-grid mt-8">
-          <div className="relative h-64 md:h-auto rounded-lg overflow-hidden">
-            <img src="/media/project-skyline.jpg" alt="Aurelia Homes" className="w-full h-full object-cover" />
-          </div>
-          <form className="enquiry-form" onSubmit={handleEnquiry}>
-            <input type="text" placeholder="Your Name" required />
-            <input type="tel" placeholder="Phone Number" required />
-            <input type="email" placeholder="Email Address" required />
-            <select><option>Interested In</option><option>2 BHK</option><option>3 BHK</option><option>4 BHK</option></select>
-            <textarea placeholder="Message" rows={4} />
-            <button type="submit">Send Enquiry</button>
-            {enquiryStatus === "success" && <p className="text-[#C9A24B] mt-2 text-sm">Thank you! We'll contact you soon.</p>}
-          </form>
-        </div>
-      </section>
-
-      <footer className="footer">
-        <div className="footer-grid">
-          <div>
-            <div className="footer-brand">{siteConfig.brand}</div>
-            <p className="footer-text">{siteConfig.address}</p>
-            <p className="footer-text mt-2">{siteConfig.phone} · {siteConfig.email}</p>
-          </div>
-          <div className="footer-links">
-            <a href="#">About</a>
-            <a href="#">Projects</a>
-            <a href="#">Careers</a>
-            <a href="#">Contact</a>
-          </div>
-          <div className="footer-links">
-            <a href="#">Privacy Policy</a>
-            <a href="#">Terms</a>
-            <a href="#">RERA: {siteConfig.rera}</a>
-          </div>
-        </div>
-        <p className="footer-disclaimer">RERA Registration No: {siteConfig.rera}. This is not an offer. Prices subject to change. Images are artistic impressions.</p>
-      </footer>
-    </>
-  );
+const icons=["◉","⌂","✳","♧","⌁","♢","◈","↗"];
+export default function Home(){
+ const [tab,setTab]=useState("2 BHK"),[highlight,setHighlight]=useState(0),[slide,setSlide]=useState(0),[menu,setMenu]=useState(false),[sent,setSent]=useState(false),[error,setError]=useState(""); const root=useRef<HTMLElement>(null);
+ useEffect(()=>{if(matchMedia('(prefers-reduced-motion: reduce)').matches)return;const lenis=new Lenis({duration:1.15});lenis.on('scroll',ScrollTrigger.update);const tick=(t:number)=>lenis.raf(t*1000);gsap.ticker.add(tick);gsap.ticker.lagSmoothing(0);const nav=document.querySelector('.nav');const onScroll=()=>nav?.classList.toggle('scrolled',window.scrollY>30);window.addEventListener('scroll',onScroll,{passive:true});onScroll();const ctx=gsap.context(()=>{gsap.from('.hero-word',{yPercent:110,opacity:0,stagger:.12,duration:1,ease:'power3.out',delay:.25});gsap.from('.hero-video',{scale:1.1,duration:2.2,ease:'power2.out'});gsap.utils.toArray<HTMLElement>('.reveal').forEach(el=>gsap.from(el,{y:32,opacity:0,duration:.9,ease:'power3.out',scrollTrigger:{trigger:el,start:'top 88%',once:true}}));gsap.utils.toArray<HTMLElement>('.counter').forEach(el=>{let target=Number(el.dataset.value);ScrollTrigger.create({trigger:el,start:'top 88%',once:true,onEnter:()=>gsap.to(el,{innerText:target,duration:1.8,snap:{innerText:1},ease:'power2.out'})})});if(innerWidth>=768){gsap.to('.project-track',{x:()=>-(document.querySelector('.project-track')!.scrollWidth-innerWidth+80),ease:'none',scrollTrigger:{trigger:'.projects',start:'top top',end:()=>'+='+document.querySelector('.project-track')!.scrollWidth,pin:true,scrub:1, invalidateOnRefresh:true}})}gsap.to('.timeline-progress',{scaleY:1,ease:'none',scrollTrigger:{trigger:'.timeline',start:'top 70%',end:'bottom 60%',scrub:true}})},root);return()=>{ctx.revert();gsap.ticker.remove(tick);lenis.destroy()}},[]);
+ useEffect(()=>{const t=setInterval(()=>setSlide(s=>(s+1)%siteConfig.testimonials.length),6000);return()=>clearInterval(t)},[]);
+ async function submit(e:React.FormEvent<HTMLFormElement>){e.preventDefault();setError('');const f=new FormData(e.currentTarget);const payload=Object.fromEntries(f.entries());try{const r=await fetch('/api/enquiry',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)});if(!r.ok)throw Error();setSent(true);e.currentTarget.reset()}catch{setError('We could not send your enquiry. Please try again.')}}
+ const links=[['Projects','#projects'],['Experience','#experience'],['Amenities','#amenities'],['Location','#location'],['Contact','#contact']];
+ return <main ref={root}>
+ <nav className="nav"><a className="brand" href="#top"><span className="brand-mark">A</span>{siteConfig.brand}</a><div className="nav-links">{links.map(([n,h])=><a key={h} href={h}>{n}</a>)}</div><a className="nav-cta" href="#contact">Enquire Now <span>↗</span></a><button className="menu-toggle" onClick={()=>setMenu(!menu)} aria-label="Toggle menu">{menu?'✕':'☰'}</button></nav>
+ <AnimatePresence>{menu&&<motion.div className="mobile-menu" initial={{opacity:0}} animate={{opacity:1}} exit={{opacity:0}}>{links.map(([n,h],i)=><motion.a key={h} href={h} onClick={()=>setMenu(false)} initial={{y:25,opacity:0}} animate={{y:0,opacity:1}} transition={{delay:i*.08}}>{n}<span>↗</span></motion.a>)}</motion.div>}</AnimatePresence>
+ <section className="hero" id="top"><div className="hero-video"><Image src="/media/hero-poster.jpg" alt="Golden-hour city skyline" fill priority sizes="100vw"/></div><div className="hero-shade"/><div className="hero-content"><div className="eyebrow"><i/> {siteConfig.city} · EST. 2010</div><h1>{siteConfig.tagline.split(' ').map((w,i)=><span className="word-mask" key={i}><span className="hero-word">{w}</span>{i<3?' ':''}</span>)}</h1><p>Considered architecture. A more beautiful way to live.</p><a className="button-gold" href="#contact">Book a Site Visit <span>↗</span></a></div><div className="hero-bottom"><span>01 / 04</span><span>SCROLL TO DISCOVER</span><span className="scroll-line"/></div></section>
+ <section className="intro section-pad"><div className="intro-image"><Image src="/media/hero-poster.jpg" alt="Mumbai skyline at golden hour" fill priority sizes="(max-width: 768px) 100vw, 50vw"/></div><div className="intro-copy"><div className="eyebrow reveal"><i/> A HIGHER POINT OF VIEW</div><h2 className="reveal">A home should<br/>make <em>room for life.</em></h2><p className="reveal">We shape enduring addresses for people who see home as more than an address. Every detail is deliberate. Every view, considered.</p><a className="text-link reveal" href="#projects">Discover our philosophy <span>↗</span></a></div></section>
+ <section className="stats section-pad"><div className="stats-head"><span>THE AURELIA DIFFERENCE</span><span>01 — 04</span></div><div className="stats-grid">{siteConfig.stats.map((s,i)=><div className="stat reveal" key={s.label}><div className="stat-number"><span className="counter" data-value={s.value}>0</span><span>{s.suffix}</span></div><p>{s.label}</p><small>0{i+1}</small></div>)}</div></section>
+ <section className="projects" id="projects"><div className="projects-heading"><div><div className="eyebrow"><i/> SIGNATURE ADDRESSES</div><h2>Made to <em>belong.</em></h2></div><p>Places with their own point of view.<br/>Find the one that feels like yours.</p></div><div className="project-track">{siteConfig.projects.map((p,i)=><article className="project-card" key={p.name}><div className="project-image"><Image src={p.image} alt={p.name} fill sizes="(max-width: 768px) 88vw, 54vw"/><span className="project-index">0{i+1} / 0{siteConfig.projects.length}</span><a href="#contact" className="project-view">View Project ↗</a></div><div className="project-meta"><div><h3>{p.name}</h3><p>{p.location} <span>·</span> {p.config}</p></div><span className="price">{p.price}</span></div></article>)}</div></section>
+ <section className="experience" id="experience"><div className="experience-image"><AnimatePresence mode="wait"><motion.div key={highlight} className="experience-photo" initial={{opacity:0,scale:1.04}} animate={{opacity:1,scale:1}} exit={{opacity:0}} transition={{duration:.7}}><Image src={siteConfig.highlights[highlight].image} alt={siteConfig.highlights[highlight].title} fill sizes="100vw"/></motion.div></AnimatePresence><div className="experience-shade"/></div><div className="experience-content"><div className="eyebrow"><i/> THE ART OF EVERYDAY</div><h2>{siteConfig.highlights[highlight].title}<span>.</span></h2><p>{siteConfig.highlights[highlight].desc}</p><div className="highlight-list">{siteConfig.highlights.map((h,i)=><button key={h.title} onClick={()=>setHighlight(i)} className={highlight===i?'active':''}><span>0{i+1}</span>{h.title}<i/></button>)}</div><div className="experience-progress"><span style={{width:`${(highlight+1)*25}%`}}/></div></div></section>
+ <section className="amenities section-pad" id="amenities"><div className="section-heading reveal"><div className="eyebrow"><i/> EVERYDAY, ELEVATED</div><h2>More to <em>look forward to.</em></h2><p>Thoughtful spaces that make the ordinary feel extraordinary.</p></div><div className="amenity-grid">{siteConfig.amenities.map((a,i)=><div className="amenity reveal" key={a.name}><span className="amenity-icon">{icons[i]}</span><span className="amenity-num">0{i+1}</span><h3>{a.name}</h3><span className="amenity-arrow">↗</span></div>)}</div></section>
+ <section className="floorplans section-pad"><div className="floor-copy"><div className="eyebrow"><i/> FIND YOUR FIT</div><h2>Room for <em>your kind of life.</em></h2><p>Light-filled layouts, considered down to the last detail.</p><div className="tabs">{Object.keys(siteConfig.floorPlans).map(t=><button key={t} onClick={()=>setTab(t)} className={tab===t?'active':''}>{t}</button>)}</div><a className="text-link" href="#contact">Request a floor plan <span>↗</span></a></div><div className="floor-image"><AnimatePresence mode="wait"><motion.div key={tab} initial={{opacity:0,y:10}} animate={{opacity:1,y:0}} exit={{opacity:0,y:-8}} transition={{duration:.35}}><Image src={siteConfig.floorPlans[tab as keyof typeof siteConfig.floorPlans]} alt={`${tab} apartment floor plan`} width={900} height={650} sizes="(max-width:768px) 100vw, 55vw"/></motion.div></AnimatePresence><span className="plan-caption">ILLUSTRATIVE FLOOR PLAN · {tab}</span></div></section>
+ <section className="location section-pad" id="location"><div className="section-heading reveal"><div className="eyebrow"><i/> A CONNECTED LIFE</div><h2>Well placed. <em>Well lived.</em></h2></div><div className="location-layout"><div className="map-art"><div className="map-river"/><div className="map-road road-a"/><div className="map-road road-b"/><div className="map-road road-c"/><div className="map-label label-one">BANDRA</div><div className="map-label label-two">WORLI</div><div className="map-label label-three">SOUTH MUMBAI</div><div className="map-pin"><span>A</span><i/></div><div className="map-compass">N<br/>↑</div></div><div className="location-list">{siteConfig.locations.map((l,i)=><div className="location-item reveal" key={l.name}><span className="location-icon">{l.icon}</span><div><span>{l.name}</span><small>From Aurelia Skyline</small></div><strong>{l.distance}</strong></div>)}</div></div></section>
+ <section className="timeline-section section-pad"><div className="section-heading reveal"><div className="eyebrow"><i/> BUILT WITH INTENTION</div><h2>Every milestone,<br/><em>made meaningful.</em></h2></div><div className="timeline"><div className="timeline-track"><span className="timeline-progress"/></div>{siteConfig.timeline.map((t,i)=><div className="timeline-row reveal" key={t.year}><span className="timeline-dot"/><span className="timeline-year">{t.year}</span><div><h3>{t.event}</h3><p>{i===0?'A vision begins to take shape.':i===siteConfig.timeline.length-1?'The keys to a new beginning.':'Carefully built, thoughtfully finished.'}</p></div></div>)}</div></section>
+ <section className="testimonial section-pad"><div className="eyebrow"><i/> WORDS FROM HOME</div><AnimatePresence mode="wait"><motion.div key={slide} className="quote" initial={{opacity:0,y:15}} animate={{opacity:1,y:0}} exit={{opacity:0,y:-12}} transition={{duration:.45}}><span className="quote-mark">“</span><blockquote>{siteConfig.testimonials[slide].text}</blockquote><div className="quote-author"><strong>{siteConfig.testimonials[slide].name}</strong><span>{siteConfig.testimonials[slide].role}</span></div></motion.div></AnimatePresence><div className="quote-controls"><button onClick={()=>setSlide((slide+siteConfig.testimonials.length-1)%siteConfig.testimonials.length)} aria-label="Previous testimonial">←</button><div>{siteConfig.testimonials.map((_,i)=><button aria-label={`Show testimonial ${i+1}`} onClick={()=>setSlide(i)} className={i===slide?'selected':''} key={i}/>)}</div><button onClick={()=>setSlide((slide+1)%siteConfig.testimonials.length)} aria-label="Next testimonial">→</button></div></section>
+ <section className="contact section-pad" id="contact"><div className="contact-photo"><Image src="/media/project-skyline.jpg" alt="Aurelia residence exterior" fill sizes="(max-width:768px) 100vw, 50vw"/><div><span>YOUR NEXT CHAPTER</span><h2>Come home<br/>to <em>more.</em></h2></div></div><div className="contact-form"><div className="eyebrow"><i/> LET’S BEGIN</div><h2>Make it <em>yours.</em></h2><p>Leave us a note. Our team will be in touch.</p>{sent?<motion.div className="success" initial={{opacity:0,scale:.9}} animate={{opacity:1,scale:1}}><span>✓</span><h3>Thank you for reaching out.</h3><p>Our team will contact you shortly.</p><button onClick={()=>setSent(false)}>Send another enquiry</button></motion.div>:<form onSubmit={submit}><div className="form-row"><label>Your name<input name="name" placeholder="Full name" required minLength={2}/></label><label>Phone number<input name="phone" type="tel" placeholder="+91 98765 43210" required pattern="[+0-9 ()-]{8,}"/></label></div><div className="form-row"><label>Email address<input name="email" type="email" placeholder="you@example.com" required/></label><label>Interested in<select name="interestedIn" defaultValue=""><option value="" disabled>Select a residence</option>{siteConfig.projects.map(p=><option key={p.name}>{p.name}</option>)}</select></label></div><label>Your message<textarea name="message" rows={3} placeholder="Tell us what you’re looking for"/></label><button className="button-gold" type="submit">Request a call back <span>↗</span></button>{error&&<p className="form-error">{error}</p>}</form>}</div></section>
+ <footer className="footer"><div className="footer-top"><a className="brand" href="#top"><span className="brand-mark">A</span>{siteConfig.brand}</a><p>Homes with a little more soul.</p><a className="footer-cta" href="#contact">Start a conversation ↗</a></div><div className="footer-bottom"><div><span>{siteConfig.address}</span><span>RERA Registration: {siteConfig.rera}</span></div><div className="footer-links">{links.slice(0,4).map(([n,h])=><a key={h} href={h}>{n}</a>)}</div><div className="footer-social">{Object.entries(siteConfig.social).map(([n,u])=><a href={u} key={n} aria-label={n} target="_blank" rel="noreferrer">{n}</a>)}</div></div><div className="legal"><span>© 2026 {siteConfig.brand}. All rights reserved.</span><span>Images are artistic impressions. Terms and conditions apply.</span><a href="#top">Back to top ↑</a></div></footer>
+ </main>
 }

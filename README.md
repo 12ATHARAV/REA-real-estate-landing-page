@@ -1,36 +1,28 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Aurelia Homes — cinematic real-estate landing page
 
-## Getting Started
+Next.js App Router + TypeScript + Tailwind CSS, GSAP/ScrollTrigger, Lenis, Framer Motion, `next/image`, and `next/font`.
 
-First, run the development server:
+## Run locally
 
 ```bash
+npm install
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open http://localhost:3000. Production checks: `npm run build` then `npm run start`.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Customize the demo
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+Edit `src/config/site.ts` to change the brand, tagline, city, contact details, stats, project names and facts, amenities, highlights, floor plans, locations, and social links. Replace the fictional/demo copy and legal fields before production use.
 
-## Learn More
+## Media
 
-To learn more about Next.js, take a look at the following resources:
+Local media lives in `public/media/`; sources, license notes, and the missing hero-video substitution are documented in `public/media/CREDITS.md`. The hero currently uses a local still image because the Pexels video download endpoint was unavailable during this build.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Enquiry endpoint
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+`POST /api/enquiry` accepts the client form JSON, logs it to the server, and returns `{ "ok": true }`. It is a demo stub; connect a CRM or secure email service before collecting real personal information.
 
-## Deploy on Vercel
+## Deploy
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Import this GitHub repository into Vercel and keep the default Next.js build settings. The sitemap is served at `/sitemap.xml`.
