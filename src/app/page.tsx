@@ -79,11 +79,9 @@ export default function Home() {
         </video>
         <div className="hero-overlay" />
         <div className="hero-content">
-          <h1>
+          <h1 className="word-reveal in">
             {"Spaces That Rise Above".split(" ").map((w, i) => (
-              <span key={i} className="hero-word inline-block overflow-hidden align-bottom mr-3">
-                <span className="inline-block translate-y-full opacity-0">{w}</span>
-              </span>
+              <span key={i} className="inline-block mr-3" style={{ transitionDelay: `${i * 0.15}s` }}>{w}</span>
             ))}
           </h1>
           <p>Premium residences crafted for those who seek more than a home — a legacy.</p>
